@@ -11,18 +11,26 @@ const Book = ({ book, doUpdate, doDelete }) => {
 
   useEffect(() => {
     setData({
+      ...book,
+      bookCategory: {...book.bookCategory},
       id: book.id,
       title: book.title,
       synopsis: book.synopsis,
       price: book.price,
       bookStatus: book.bookStatus,
       authorName: book.authorName,
+      publicationDate: new Date()
     });
   }, []);
 
   const handleUpdate = () => {
+    doUpdate(data)
     setEdit(false);
   };
+
+  const handleDelete = (id) => {
+    doDelete(id)
+  }
 
   const handleForm = (e, formName) => {
     setData({ ...data, [formName]: e.target.value });
@@ -130,7 +138,7 @@ const Book = ({ book, doUpdate, doDelete }) => {
               <Button variant="success" onClick={() => setEdit(true)}>
                 Edit
               </Button>{" "}
-              <Button variant="danger">Save</Button>
+              <Button variant="danger" onClick={() => handleDelete(book.id)}>Delete</Button>
             </>
           )}
         </Card.Body>

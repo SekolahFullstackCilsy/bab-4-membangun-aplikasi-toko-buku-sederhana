@@ -1,21 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "../../App.css";
 import { Card, Button } from "react-bootstrap";
 import numeral from "numeral";
 import { LinkContainer } from "react-router-bootstrap";
+import {getBookById} from '../../store/actions'
+import { connect } from "react-redux";
 
 const BookDetailPage = (props) => {
-  const book = {
-    id: 5,
-    title: "ini judul",
-    isbn: "null",
-    authorName: "ini author",
-    synopsis: "ini sinopsis",
-    price: 84000.0,
-    bookStatus: "OUT_OF_STOCK",
-  };
-
+  const {id} = props.match.params
+  const {book} = props
   const bookStatus = book.bookStatus === "FOR_SELL" ? "info" : "warning";
+
+  useEffect(() => {
+    props.getBookById(id)
+  }, [])
 
   return (
     <div className="App">
@@ -64,4 +62,16 @@ const BookDetailPage = (props) => {
   );
 };
 
-export default BookDetailPage;
+const mapStateToProps = state => {
+  return {
+    book: state.bookReducer.book
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getBookById: (id) => dispatch(getBookById(id))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(BookDetailPage);
