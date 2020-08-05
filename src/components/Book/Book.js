@@ -4,7 +4,12 @@ import { LinkContainer } from "react-router-bootstrap";
 import { withRouter } from "react-router-dom";
 import numeral from "numeral";
 
-const Book = ({ book, doUpdate, doDelete }) => {
+import { connect } from "react-redux";
+import { addToCart } from "../../store/actions";
+
+const Book = (props) => {
+  const { book, doUpdate, doDelete, addToCart } = props;
+  console.log("PROPS", props);
   const [edit, setEdit] = useState(false);
   const [data, setData] = useState({});
   const bookStatus = book.bookStatus === "FOR_SELL" ? "info" : "warning";
@@ -12,25 +17,25 @@ const Book = ({ book, doUpdate, doDelete }) => {
   useEffect(() => {
     setData({
       ...book,
-      bookCategory: {...book.bookCategory},
+      bookCategory: { ...book.bookCategory },
       id: book.id,
       title: book.title,
       synopsis: book.synopsis,
       price: book.price,
       bookStatus: book.bookStatus,
       authorName: book.authorName,
-      publicationDate: new Date()
+      publicationDate: new Date(),
     });
   }, []);
 
   const handleUpdate = () => {
-    doUpdate(data)
+    doUpdate(data);
     setEdit(false);
   };
 
   const handleDelete = (id) => {
-    doDelete(id)
-  }
+    doDelete(id);
+  };
 
   const handleForm = (e, formName) => {
     setData({ ...data, [formName]: e.target.value });
@@ -61,12 +66,15 @@ const Book = ({ book, doUpdate, doDelete }) => {
               <option value="OUT_OF_STOCK">OUT_OF_STOCK</option>
             </Form.Control>
           ) : (
-            <Button
-              variant={bookStatus}
-              className="btn-sm font-weight-bold m-2"
-            >
-              {book.bookStatus}
-            </Button>
+            <React.Fragment>
+              <Button onClick={() => addToCart(book)}>Add to cart</Button>
+              <Button
+                variant={bookStatus}
+                className="btn-sm font-weight-bold m-2"
+              >
+                {book.bookStatus}
+              </Button>
+            </React.Fragment>
           )}
 
           {/*Price*/}
@@ -138,7 +146,9 @@ const Book = ({ book, doUpdate, doDelete }) => {
               <Button variant="success" onClick={() => setEdit(true)}>
                 Edit
               </Button>{" "}
-              <Button variant="danger" onClick={() => handleDelete(book.id)}>Delete</Button>
+              <Button variant="danger" onClick={() => handleDelete(book.id)}>
+                Delete
+              </Button>
             </>
           )}
         </Card.Body>
@@ -147,4 +157,16 @@ const Book = ({ book, doUpdate, doDelete }) => {
   );
 };
 
-export default withRouter(Book);
+const mapStateToProps = (state) => {
+  return {
+    bookInCart: state.bookReducer.booksInCart,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addToCart: (book) => dispatch(addToCart(book)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Book));

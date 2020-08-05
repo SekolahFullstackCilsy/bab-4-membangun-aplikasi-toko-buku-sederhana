@@ -3,17 +3,17 @@ import "../../App.css";
 import { Card, Button } from "react-bootstrap";
 import numeral from "numeral";
 import { LinkContainer } from "react-router-bootstrap";
-import {getBookById} from '../../store/actions'
+import { getBookById } from "../../store/actions";
 import { connect } from "react-redux";
 
 const BookDetailPage = (props) => {
-  const {id} = props.match.params
-  const {book} = props
+  const { id } = props.match.params;
+  const { book } = props;
   const bookStatus = book.bookStatus === "FOR_SELL" ? "info" : "warning";
 
   useEffect(() => {
-    props.getBookById(id)
-  }, [])
+    props.getBookById(id);
+  }, []);
 
   return (
     <div className="App">
@@ -26,7 +26,10 @@ const BookDetailPage = (props) => {
               </LinkContainer>
             </div>
             <div className="col-md-6">
-              <h2 style={{ color: "#8052ff" }}>{book.title}</h2>
+              <h2 style={{ color: "#8052ff" }}>
+                {book.title}, Item in cart:{" "}
+                {props.booksInCart.filter((item) => item.id == id).length}
+              </h2>
             </div>
           </div>
           <div className="row">
@@ -62,16 +65,17 @@ const BookDetailPage = (props) => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    book: state.bookReducer.book
-  }
-}
+    book: state.bookReducer.book,
+    booksInCart: state.bookReducer.booksInCart,
+  };
+};
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    getBookById: (id) => dispatch(getBookById(id))
-  }
-}
+    getBookById: (id) => dispatch(getBookById(id)),
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(BookDetailPage);
